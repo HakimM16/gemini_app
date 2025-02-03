@@ -6,6 +6,14 @@ import { Context } from '../../context/Context'
 const Main = () => {
     const {onSent, recentPrompt, showResult, loading, resultData, setInput, input} = useContext(Context);
 
+    // Add a handler for the Enter key press
+    const handleKeyPress = (e) => {
+        // Check if the key pressed is Enter and there's an input
+        if (e.key === 'Enter' && input.trim() !== '') {
+            onSent();
+        }
+    };
+
   return (
     <div className='main'>
         <div className='nav'>
@@ -61,7 +69,13 @@ const Main = () => {
             
             <div className="main-bottom">
                 <div className="search-box">
-                    <input onChange={(e)=>setInput(e.target.value)} value={input} type="text"  placeholder='Enter a prompt here'/>
+                    <input 
+                        onChange={(e)=>setInput(e.target.value)} 
+                        onKeyPress={handleKeyPress} // Add the onKeyPress event handler
+                        value={input} 
+                        type="text"  
+                        placeholder='Enter a prompt here'
+                    />
                     <div>
                         <img src={assets.gallery_icon} alt="" />
                         <img src={assets.mic_icon} alt="" />
