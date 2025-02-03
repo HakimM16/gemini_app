@@ -3,6 +3,8 @@
     min-height: 100vh;
     padding-bottom: 15vh;
     position: relative;
+    background-color: #121212;
+    color: #e0e0e0;
 }
 
 .main .nav {
@@ -11,7 +13,7 @@
     justify-content: space-between;
     font-size: 22px;
     padding: 20px;
-    color: #585858;
+    color: #9ed7ff;
 }
 
 .main .nav img {
@@ -27,7 +29,7 @@
 .main .greet {
     margin: 50px 0px;
     font-size: 56px;
-    color: #c4c7c5;
+    color: #e0e0e0;
     font-weight: 500;
     padding: 20px;
 }
@@ -48,29 +50,31 @@
 .main .card {
     height: 200px;
     padding: 15px;
-    background-color: #f0f4f9;
+    background-color: #1e1e1e;
     border-radius: 10px;
     position: relative;
     cursor: pointer;
+    border: 1px solid #2c2c2c;
+    transition: background-color 0.3s ease;
 }
 
 .main .card img {
     width: 35px;
     padding: 5px;
     position: absolute;
-    background-color: white;
+    background-color: #2c2c2c;
     border-radius: 20px;
     bottom: 10px;
     right: 10px;
 }
 
 .main .card p {
-    color: #585858;
+    color: #9ed7ff;
     font-size: 17px;
 }
 
 .main .card:hover {
-    background-color: #dfe4ea;
+    background-color: #262626;
 }
 
 .main-bottom {
@@ -87,14 +91,16 @@
     align-items: center;
     justify-content: space-between;
     gap: 20px;
-    background-color: #f0f4f9;
+    background-color: #1e1e1e;
     padding: 10px 20px;
     border-radius: 50px;
+    border: 1px solid #2c2c2c;
 }
 
 .search-box img {
     width: 24px;
     cursor: pointer;
+    filter: invert(0.7) sepia(1) saturate(3) hue-rotate(170deg);
 }
 
 .search-box input {
@@ -104,6 +110,7 @@
     outline: none;
     padding: 8px;
     font-size: 18px;
+    color: #e0e0e0;
 }
 
 .search-box div {
@@ -117,6 +124,7 @@
     margin: 15px auto;
     text-align: center;
     font-weight: 300;
+    color: #9ed7ff;
 }
 
 .result {
@@ -145,6 +153,7 @@
     display: flex;
     align-items: start;
     gap: 20px;
+    color: #e0e0e0;
 }
 
 .loader {
@@ -157,8 +166,8 @@
 .loader hr  {
     border-radius: 4px;
     border: none;
-    background-color: #f6f7f8;
-    background: linear-gradient(to right, #9ed7ff, #fff, #9ed7ff);
+    background-color: #2c2c2c;
+    background: linear-gradient(to right, #4b90ff, #1e1e1e, #4b90ff);
     background-size: 800px 50px;
     height: 20px;
     animation: loader 3s infinite linear;
@@ -173,7 +182,7 @@
     }
 }
 
-.result-data p{
+.result-data p {
     font-size: 17px;
     font-weight: 300;
     line-height: 1.8;
