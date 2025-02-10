@@ -61,22 +61,22 @@ const ContextProvider = (props) => {
         }
     };
 
-    const revealTextGradually = (fullText) => {
-        const words = fullText.match(/\S+\s*/g) || [];
-        let currentIndex = 0;
+const revealTextGradually = (fullText) => {
+    const words = fullText.match(/\S+\s*/g) || [];
+    let currentIndex = 0;
 
-        const revealNextWord = () => {
-            if (currentIndex < words.length) {
-                setDisplayedText(prev => prev + words[currentIndex]);
-                currentIndex++;
-                
-                // Adjust timing to control reveal speed (e.g., 50-100ms per word)
-                setTimeout(revealNextWord, Math.random() * 50 + 50);
-            }
-        };
-
-        revealNextWord();
+    const revealNextWord = () => {
+        if (currentIndex < words.length) {
+            setDisplayedText(prev => prev + words[currentIndex]);
+            currentIndex++;
+            
+            // Reduced delay to speed up text reveal (25-50ms per word)
+            setTimeout(revealNextWord, Math.random() * 25 + 25);
+        }
     };
+
+    revealNextWord();
+};
 
     const newChat = () => {
         setLoading(false);
