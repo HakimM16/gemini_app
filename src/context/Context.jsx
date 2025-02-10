@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useRef } from "react";
 import runChat from "../config/gemini";
 
 export const Context = createContext();
@@ -11,6 +11,7 @@ const ContextProvider = (props) => {
     const [loading, setLoading] = useState(false);
     const [resultData, setResultData] = useState("");
     const [displayedText, setDisplayedText] = useState("");
+    const [scrollTrigger, setScrollTrigger] = useState(0);
 
     const processResponse = (response) => {
         const paragraphs = response.split(/\n\s*\n/);
@@ -61,22 +62,25 @@ const ContextProvider = (props) => {
         }
     };
 
-const revealTextGradually = (fullText) => {
-    const words = fullText.match(/\S+\s*/g) || [];
-    let currentIndex = 0;
-
-    const revealNextWord = () => {
-        if (currentIndex < words.length) {
-            setDisplayedText(prev => prev + words[currentIndex]);
-            currentIndex++;
-            
-            // Reduced delay to speed up text reveal (25-50ms per word)
-            setTimeout(revealNextWord, Math.random() * 25 + 25);
-        }
+    const revealTextGradually = (fullText) => {
+        const words = fullText.match(/\S+\s*/g) || [];
+        let currentIndex = 0;
+    
+        const revealNextWord = () => {
+            if (currentIndex < words.length) {
+                setDisplayedText(prev => prev + words[currentIndex]);
+                currentIndex++;
+                
+                // Trigger scroll after each word is added
+                setScrollTrigger(prev => prev + 1);
+                
+                // Reduced delay to speed up text reveal (25-50ms per word)
+                setTimeout(revealNextWord, Math.random() * 25 + 25);
+            }
+        };
+    
+        revealNextWord();
     };
-
-    revealNextWord();
-};
 
     const newChat = () => {
         setLoading(false);
@@ -94,7 +98,8 @@ const revealTextGradually = (fullText) => {
         showResult,
         loading,
         resultData,
-        displayedText, // New prop for gradually revealed text
+        displayedText,
+        scrollTrigger, // Add scroll trigger to context
         input,
         setInput,
         newChat
