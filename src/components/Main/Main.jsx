@@ -4,7 +4,7 @@ import { assets } from '../../assets/assets'
 import { Context } from '../../context/Context'
 
 const Main = () => {
-    const {onSent, recentPrompt, showResult, loading, resultData, setInput, input} = useContext(Context);
+    const {onSent, recentPrompt, showResult, loading, displayedText, setInput, input} = useContext(Context);
 
     // Add a handler for the Enter key press
     const handleKeyPress = (e) => {
@@ -62,7 +62,7 @@ const Main = () => {
                         <hr />
                     </div>
                     ) : (
-                        <div dangerouslySetInnerHTML={{ __html: resultData }} /> // Display using displayedResult
+                        <div dangerouslySetInnerHTML={{ __html: displayedText }} /> // Display using displayedResult
                     )}
                 </div>
             </div>
