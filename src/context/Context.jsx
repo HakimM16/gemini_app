@@ -16,7 +16,7 @@ const ContextProvider = (props) => {
         const paragraphs = response.split(/\n\s*\n/);
         const formattedParagraphs = paragraphs.map(paragraph => {
             let formatted = paragraph.trim();
-
+     
             // Check if it's a title (if you have titles)
             if (formatted.startsWith("##")) {
                 const titleText = formatted.substring(2).trim();
@@ -25,11 +25,11 @@ const ContextProvider = (props) => {
                 formatted = formatted.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
                 formatted = formatted.replace(/\*(.*?)\*/g, "<i>$1</i>");
                 formatted = formatted.replace(/\n/g, "<br/>");
-
-                // Replace * bullet points with 🔹
-                formatted = formatted.replace(/\n\s*-\s*(.+)/g, "<ul><li>🔹 $1</li></ul>"); // Unordered list items
+     
+                // Replace the first * of each line, including indented lines, with $
+                formatted = formatted.replace(/\*/g, "&#x2022;");
                 formatted = formatted.replace(/\n\s*\d+\.\s*(.+)/g, "<ol><li>$1</li></ol>"); // Ordered list items
-
+     
                 formatted = formatted.replace(/<\/ul>\s*<ul>/g, "");
                 formatted = formatted.replace(/<\/ol>\s*<ol>/g, "");
                 formatted = formatted.replace(/```(.*?)```/gs, "<pre><code>$1</code></pre>");
@@ -37,8 +37,7 @@ const ContextProvider = (props) => {
             }
         });
         return formattedParagraphs.join(""); // Space is already added in individual elements
-    };
-
+     };
 
     const onSent = async (prompt) => {
         setResultData(""); // Clear previous result
