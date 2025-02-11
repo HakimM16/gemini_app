@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, useRef } from "react";
+import { createContext, useState, useEffect } from "react";
 import runChat from "../config/gemini";
 
 export const Context = createContext();
@@ -13,32 +13,30 @@ const ContextProvider = (props) => {
     const [displayedText, setDisplayedText] = useState("");
     const [scrollTrigger, setScrollTrigger] = useState(0);
 
-    const processResponse = (response) => {
-        const paragraphs = response.split(/\n\s*\n/);
-        const formattedParagraphs = paragraphs.map(paragraph => {
-            let formatted = paragraph.trim();
-     
-            if (formatted.startsWith("##")) {
-                const titleText = formatted.substring(2).trim();
-                return `<h2>${titleText}</h2><br/>`;
-            } else {
-                formatted = formatted.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
-                formatted = formatted.replace(/\*(.*?)\*/g, "<i>$1</i>");
-                formatted = formatted.replace(/\n/g, "<br/>");
-                formatted = formatted.replace(/\*/g, "&#x2022;");
-                formatted = formatted.replace(/\n\s*\d+\.\s*(.+)/g, "<ol><li>$1</li></ol>");
-                formatted = formatted.replace(/<\/ul>\s*<ul>/g, "");
-                formatted = formatted.replace(/<\/ol>\s*<ol>/g, "");
-                formatted = formatted.replace(/```(.*?)```/gs, "<pre><code>$1</code></pre>");
-                return `<p>${formatted}</p><br/>`;
+    const revealTextGradually = (text) => {
+        if (!text) return;
+        
+        // Split text into words but preserve punctuation and spacing
+        const words = text.match(/[\w\d]+|\s+|[^\w\s]/g) || [];
+        let currentIndex = 0;
+        let accumulated = '';
+        
+        const revealNextWord = () => {
+            if (currentIndex < words.length) {
+                accumulated += words[currentIndex];
+                setDisplayedText(accumulated);
+                currentIndex++;
+                setScrollTrigger(prev => prev + 1);
+                setTimeout(revealNextWord, Math.random() * 25 + 25);
             }
-        });
-        return formattedParagraphs.join("");
+        };
+        
+        revealNextWord();
     };
 
     const onSent = async (prompt) => {
-        setResultData(""); // Clear previous result
-        setDisplayedText(""); // Clear displayed text
+        setResultData("");
+        setDisplayedText("");
         setLoading(true);
         setShowResult(true);
 
@@ -48,38 +46,23 @@ const ContextProvider = (props) => {
 
         try {
             const response = await runChat(currentPrompt);
-            const formattedResponse = processResponse(response);
-            setResultData(formattedResponse);
             
-            // Start word-by-word reveal
-            revealTextGradually(formattedResponse);
+            if (!response) {
+                throw new Error("No response received");
+            }
+
+            // Clean up the response text
+            const cleanResponse = response.trim();
+            setResultData(cleanResponse);
+            revealTextGradually(cleanResponse);
+
         } catch (error) {
             console.error("Error fetching response:", error);
-            setDisplayedText("<p>Error fetching response. Please try again.</p>");
+            setDisplayedText("I encountered an error. Please try again.");
         } finally {
             setLoading(false);
             setInput("");
         }
-    };
-
-    const revealTextGradually = (fullText) => {
-        const words = fullText.match(/\S+\s*/g) || [];
-        let currentIndex = 0;
-    
-        const revealNextWord = () => {
-            if (currentIndex < words.length) {
-                setDisplayedText(prev => prev + words[currentIndex]);
-                currentIndex++;
-                
-                // Trigger scroll after each word is added
-                setScrollTrigger(prev => prev + 1);
-                
-                // Reduced delay to speed up text reveal (25-50ms per word)
-                setTimeout(revealNextWord, Math.random() * 25 + 25);
-            }
-        };
-    
-        revealNextWord();
     };
 
     const newChat = () => {
@@ -99,7 +82,7 @@ const ContextProvider = (props) => {
         loading,
         resultData,
         displayedText,
-        scrollTrigger, // Add scroll trigger to context
+        scrollTrigger,
         input,
         setInput,
         newChat

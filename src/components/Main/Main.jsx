@@ -4,23 +4,59 @@ import { assets } from '../../assets/assets'
 import { Context } from '../../context/Context'
 
 const Main = () => {
-    const { onSent, recentPrompt, showResult, loading, displayedText, scrollTrigger, setInput, input } = useContext(Context);
+    const { 
+        onSent, 
+        recentPrompt, 
+        showResult, 
+        loading, 
+        displayedText, 
+        scrollTrigger, 
+        setInput, 
+        input 
+    } = useContext(Context);
+    
     const resultRef = useRef(null);
 
-    // Add a handler for the Enter key press
     const handleKeyPress = (e) => {
-        // Check if the key pressed is Enter and there's an input
         if (e.key === 'Enter' && input.trim() !== '') {
             onSent();
         }
     };
 
-    // Scroll effect triggered by scrollTrigger
     useEffect(() => {
         if (resultRef.current) {
             resultRef.current.scrollTop = resultRef.current.scrollHeight;
         }
     }, [scrollTrigger]);
+
+    const renderResponse = () => {
+        if (loading) {
+            return (
+                <div className='loader'>
+                    <hr />
+                    <hr />
+                    <hr />
+                </div>
+            );
+        }
+
+        if (!displayedText) {
+            return null;
+        }
+
+        // Split the response into paragraphs and render each separately
+        const paragraphs = displayedText.split('\n').filter(text => text.trim());
+        
+        return (
+            <div className="response-content">
+                {paragraphs.map((paragraph, index) => (
+                    <p key={index} className="response-paragraph">
+                        {paragraph}
+                    </p>
+                ))}
+            </div>
+        );
+    };
 
     return (
         <div className='main'>
@@ -29,7 +65,6 @@ const Main = () => {
                 <img src={assets.user_icon} alt='' />
             </div>
             <div className="main-container">
-
                 {!showResult ? (
                     <>
                         <div className="greet">
@@ -56,32 +91,23 @@ const Main = () => {
                         </div>
                     </>
                 ) : (
-                    <div className='result' ref={resultRef}> {/* Added ref here */}
+                    <div className='result' ref={resultRef}>
                         <div className="result-title">
                             <img src={assets.user_icon} alt='' />
                             <p>{recentPrompt}</p>
                         </div>
                         <div className="result-data">
                             <img src={assets.gemini_icon} alt="" />
-                            {loading ? (
-                                <div className='loader'>
-                                    <hr />
-                                    <hr />
-                                    <hr />
-                                </div>
-                            ) : (
-                                <div dangerouslySetInnerHTML={{ __html: displayedText }} />
-                            )}
+                            {renderResponse()}
                         </div>
                     </div>
-
                 )}
 
                 <div className="main-bottom">
                     <div className="search-box">
                         <input
                             onChange={(e) => setInput(e.target.value)}
-                            onKeyDown={handleKeyPress} // Add the onKeyPress event handler
+                            onKeyDown={handleKeyPress}
                             value={input}
                             type="text"
                             placeholder='Enter a prompt here'
@@ -93,7 +119,7 @@ const Main = () => {
                         </div>
                     </div>
                     <p className="bottom-info">
-                        Gemini may display inaacurate info, including about people, so double-check its responses. Your privacy and Gemini Apps
+                        Gemini may display inaccurate info, including about people, so double-check its responses. Your privacy and Gemini Apps
                     </p>
                 </div>
             </div>

@@ -18,18 +18,17 @@ import {
     maxOutputTokens: 8192,
     responseMimeType: "text/plain",
   };
-  
-  async function run(prompt) {
+
+  async function runChat(prompt) {
     const chatSession = model.startChat({
-      generationConfig,
-      history: [
-      ],
+        generationConfig,
+        history: [],
     });
-  
+
     const result = await chatSession.sendMessage(prompt);
     const response = result.response;
-    console.log(response.text());
-    return response.text();
+    console.log(response);
+    return response.text(); // Add await here
   }
   
-  export default run;
+  export default runChat;
