@@ -13,25 +13,57 @@ const ContextProvider = (props) => {
     const [displayedText, setDisplayedText] = useState("");
     const [scrollTrigger, setScrollTrigger] = useState(0);
 
+    const processText = (text) => {
+        if (!text) return '';
+    
+        // Split into lines first to handle bullet points
+        const lines = text.split('\n');
+        let processed = lines.map(line => {
+            // Handle bullet points first
+            const leadingSpaces = line.match(/^\s*/)[0].length;
+            let processedLine = line;
+            
+            // Convert double asterisks to bold tags
+            processedLine = processedLine.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            // Convert single asterisks to italics (but not the bullet point asterisks)
+            processedLine = processedLine.replace(/(?<!^)\*(.*?)\*/g, '<i>$1</i>');
+            
+            // Handle bullet points last
+            if (line.trim().startsWith('*')) {
+                const withoutAsterisk = processedLine.replace(/^\s*\*\s/, '');
+                const indent = Math.floor(leadingSpaces / 2) * 20;
+                return `<div style="margin-left: ${indent}px">• ${withoutAsterisk}</div>`;
+            }
+            return processedLine;
+        }).join('\n');
+    
+        return processed;
+    };
+    
     const revealTextGradually = (text) => {
         if (!text) return;
         
-        // Split text into words but preserve punctuation and spacing
-        const words = text.match(/[\w\d]+|\s+|[^\w\s]/g) || [];
+        // Process the text first
+        const processedText = processText(text);
+        
+        // Split into chunks while preserving HTML tags
+        const chunks = processedText.match(/(<[^>]+>)|([^<]+)/g) || [];
         let currentIndex = 0;
         let accumulated = '';
         
-        const revealNextWord = () => {
-            if (currentIndex < words.length) {
-                accumulated += words[currentIndex];
+        const revealNextChunk = () => {
+            if (currentIndex < chunks.length) {
+                accumulated += chunks[currentIndex];
                 setDisplayedText(accumulated);
                 currentIndex++;
                 setScrollTrigger(prev => prev + 1);
-                setTimeout(revealNextWord, Math.random() * 25 + 25);
+                // Slightly faster animation for better readability
+                setTimeout(revealNextChunk, Math.random() * 15 + 15);
             }
         };
         
-        revealNextWord();
+        revealNextChunk();
     };
 
     const onSent = async (prompt) => {

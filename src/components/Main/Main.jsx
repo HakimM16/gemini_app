@@ -39,21 +39,14 @@ const Main = () => {
                 </div>
             );
         }
-
+    
         if (!displayedText) {
             return null;
         }
-
-        // Split the response into paragraphs and render each separately
-        const paragraphs = displayedText.split('\n').filter(text => text.trim());
-        
+    
         return (
             <div className="response-content">
-                {paragraphs.map((paragraph, index) => (
-                    <p key={index} className="response-paragraph">
-                        {paragraph}
-                    </p>
-                ))}
+                <div dangerouslySetInnerHTML={{ __html: displayedText }} />
             </div>
         );
     };
