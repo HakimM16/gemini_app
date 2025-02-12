@@ -29,7 +29,7 @@ const ContextProvider = (props) => {
             // Convert single asterisks to italics (but not the bullet point asterisks)
             processedLine = processedLine.replace(/(?<!^)\*(.*?)\*/g, '<i>$1</i>');
             
-            // Check if the line is only a bold title (starts and ends with ** after trimming)
+            // Check if the line is only a bold title (starts and ends with ** after trimming
             const isTitle = line.trim().startsWith('**') && line.trim().endsWith('**');
             
             // Handle bullet points only if it's not a title
