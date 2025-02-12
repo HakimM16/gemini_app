@@ -29,8 +29,11 @@ const ContextProvider = (props) => {
             // Convert single asterisks to italics (but not the bullet point asterisks)
             processedLine = processedLine.replace(/(?<!^)\*(.*?)\*/g, '<i>$1</i>');
             
-            // Handle bullet points last
-            if (line.trim().startsWith('*')) {
+            // Check if the line is only a bold title (starts and ends with ** after trimming)
+            const isTitle = line.trim().startsWith('**') && line.trim().endsWith('**');
+            
+            // Handle bullet points only if it's not a title
+            if (line.trim().startsWith('*') && !isTitle) {
                 const withoutAsterisk = processedLine.replace(/^\s*\*\s/, '');
                 const indent = Math.floor(leadingSpaces / 2) * 20;
                 return `<div style="margin-left: ${indent}px">• ${withoutAsterisk}</div>`;
@@ -59,7 +62,7 @@ const ContextProvider = (props) => {
                 currentIndex++;
                 setScrollTrigger(prev => prev + 1);
                 // Slightly faster animation for better readability
-                setTimeout(revealNextChunk, Math.random() * 15 + 15);
+                setTimeout(revealNextChunk, Math.random() * 15 + 70);
             }
         };
         
